@@ -48,11 +48,10 @@ class EventListener implements IEventListener
         //This Handler will print the incoming message (only for the event we are interested in).
         //var_dump($event);
         if ($event instanceof PAMI\Message\Event\DeviceStateChangeEvent) {
-            echo("Got a DeviceStateChangeEvent\n");
+            echo("Got a new DeviceStateChangeEvent\n");
             //var_dump($event);
-            $array = $event->getKeys();
-            echo("device:".$array['device']."\n");
-            echo("state:".$array['state']."\n");
+            echo(" - Device:".$event->getDevice()."\n");
+            echo(" - State:".$event->getState()."\n");
         }
     }
 }

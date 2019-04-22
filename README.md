@@ -5,16 +5,15 @@ Requirements
 Installation
 ------------
 ```
-./composer.phar selfupdate
-./composer.phar require
+./composer.phar install -o
 ```
 
 Running the example:
 --------------------
 Terminal 1: Run the example devstate monitor
 ```
-# ./example.php amihost port amiuser amipass
-./example.php localhost 5038 admin secret
+# ./devstate_monitor.php amihost port amiuser amipass
+./devstate_monitor.php localhost 5038 admin secret
 ```
 Note: Adjust the amihost, port user and password according to your local settings
 

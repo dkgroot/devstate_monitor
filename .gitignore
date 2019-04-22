@@ -1,2 +1,4 @@
 *~
 *.bak
+composer.lock
+vendor
