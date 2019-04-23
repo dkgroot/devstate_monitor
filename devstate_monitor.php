@@ -8,7 +8,7 @@
  *
  * Copyright 2016 Diederik de Groot <ddegroot@talon.nl>
  */
-if ($argc <7 ) {
+if ($argc <5 ) {
     echo "Use: $argv[0] <host> <port> <user> <pass>] ";
     echo "example: ./devstate_monitor.php 192.168.1.20 5038 admin secret
 " ;
