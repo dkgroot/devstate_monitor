@@ -81,10 +81,13 @@ try
     $pami->open();
 
     // start waiting for events (for 1 minute)
-    $time = time();
-    while((time() - $time) < 60)
+    //$time = time();
+    //while((time() - $time) < 60)
+    
+    // or run continuesly
+    while (true)
     {
-        usleep(1000);					// wait 10 ms
+        usleep(10000);					// wait 10 ms
         $pami->process();				// poll pami to see if anything happened
     }
     $pami->close(); // send logoff and close the connection.
