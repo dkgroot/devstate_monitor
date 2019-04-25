@@ -1,28 +1,34 @@
 {
-  "name": "dkgroot/devstate_monitor",
-  "type": "library",
-  "description": "Asterisk Manager Interface (AMI) client for PHP, event driven, object oriented",
-  "keywords": ["asterisk","ami","client","telephony","voip","event","action","manager","monitor"],
-  "homepage": "http://dkgroot.github.com/devstate_monitor",
-  "license": "Apache2",
-  "authors": [
-    {
-      "name": "Diederik de Groot",
-      "email": "ddegroot@talon.nl",
-      "homepage": "http://dkgroot.github.com/",
-      "role": "Developer"
+    "name": "dkgroot/devstate_monitor",
+    "type": "library",
+    "description": "Asterisk Manager Interface (AMI) client for PHP, event driven, object oriented",
+    "keywords": ["asterisk","ami","client","telephony","voip","event","action","manager","monitor"],
+    "homepage": "http://github.com/dkgroot/devstate_monitor",
+    "license": "Apache2",
+    "authors": [
+        {
+            "name": "Diederik de Groot",
+            "email": "ddegroot@talon.nl",
+            "homepage": "http://github.com/chan-sccp/",
+            "role": "Maintainer"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "PAMI\\": "src/PAMI"
+        }
+    },
+    "repositories": [
+        {
+            "url": "https://github.com/dkgroot/PAMI.git",
+            "type": "git"
+        }
+    ],
+    "require": {
+        "php": ">=5.3.3",
+        "psr/log": ">= 1.0.0"
+    },
+    "require-dev": {
+        "dkgroot/pami": ">= 2.0.1.0-alpha"
     }
-  ],
-  "autoload": {
-    "psr-4": {
-      "PAMI\\": "src/PAMI"
-    }
-  },
-  "require": {
-    "php": ">=5.3.3",
-    "psr/log": ">= 1.0.0"
-  },
-  "require-dev": {
-    "marcelog/pami": "2.*"
-  }
 }

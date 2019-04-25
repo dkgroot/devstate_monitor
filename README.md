@@ -8,6 +8,18 @@ Installation
 ./composer.phar install -o
 ```
 
+Upgrade
+------------
+```
+./composer.phar upgrade -o
+```
+
+Dependencies
+------------
+- composer
+- psr/log
+- dkgroot/pami
+
 Running the example:
 --------------------
 Terminal 1: Run the example devstate monitor
