@@ -25,13 +25,6 @@ require(implode(DIRECTORY_SEPARATOR, array(
     'autoload.php'
 )));
 
-// patching the offical PAMI release
-require(implode(DIRECTORY_SEPARATOR, array(
-    __DIR__,
-    'patches',
-    'DeviceStateChangeEvent.php'
-)));
-
 use PAMI\Client\Impl\ClientImpl;
 use PAMI\Listener\IEventListener;
 use PAMI\Message\Event\EventMessage;
