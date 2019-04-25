@@ -86,21 +86,21 @@ try
     $pami->registerEventListener(new EventListener());
     $pami->open();
 
-	$response = $pami->send(new SCCPConfigMetaDataAction());
-	var_dump($response);
-	print_r($response->getJSON());
+    $response = $pami->send(new SCCPConfigMetaDataAction());
+    var_dump($response);
+    print_r($response->getJSON());
 
-	$response = $pami->send(new SCCPConfigMetaDataAction("general"));
-	print_r($response->getJSON());
-	
-	$response = $pami->send(new SCCPConfigMetaDataAction("device"));
-	print_r($response->getJSON());
-	
+    $response = $pami->send(new SCCPConfigMetaDataAction("general"));
+    print_r($response->getJSON());
+
+    $response = $pami->send(new SCCPConfigMetaDataAction("device"));
+    print_r($response->getJSON());
+
     $time = time();
     while((time() - $time) < $options['connect_timeout'])
     {
-        usleep(10000);					// wait 10 ms
-        $pami->process();				// poll pami to see if anything happened
+        usleep(10000);                   // wait 10 ms
+        $pami->process();                // poll pami to see if anything happened
     }
     $pami->close(); // send logoff and close the connection.
 } catch (Exception $e) {

@@ -64,8 +64,8 @@ try
         'username' => $argv[3],
         'secret' => $argv[4],
 
-        'connect_timeout' => 60,
-        'read_timeout' => 60
+        'connect_timeout' => 10,
+        'read_timeout' => 1
     );
     echo("Connecting to host:".$options['host'].":".$options['port']."\n");
 
@@ -73,13 +73,20 @@ try
     $pami->registerEventListener(new EventListener());
     $pami->open();
 
-    // start waiting for events (for 1 minute)
-    //$time = time();
-    //while((time() - $time) < 60)
-    
-    // or run continuesly
-    while (true)
+    $time = time();
+    while((time() - $time) < $options['connect_timeout'])           // start waiting for events (for ;connect_timeout' minute)
+    //while (true)                                                  // or run indefinitly
     {
+        $command = new CommandAction("devstate change Custom:mystate1 INUSE");
+        $command->setActionId("1432.123");
+        $response = $pami->send($command);
+
+        usleep(10000);					// wait 10 ms
+        $pami->process();				// poll pami to see if anything happened
+
+        sleep(1);				        // wait 1s
+        $response = $pami->send(new CommandAction("devstate change Custom:mystate1 NOT_INUSE"));
+
         usleep(10000);					// wait 10 ms
         $pami->process();				// poll pami to see if anything happened
     }
