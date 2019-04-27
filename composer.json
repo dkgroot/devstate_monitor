@@ -22,6 +22,10 @@
         {
             "url": "https://github.com/dkgroot/PAMI.git",
             "type": "git"
+        },
+        {
+            "url": "https://github.com/dkgroot/CiscoXML.git",
+            "type": "git"
         }
     ],
     "require": {
@@ -29,6 +33,7 @@
         "psr/log": ">= 1.0.0"
     },
     "require-dev": {
-        "dkgroot/pami": "dev-master"
+        "dkgroot/pami": "dev-master",
+        "dkgroot/ciscoxml": "dev-master"
     }
 }
