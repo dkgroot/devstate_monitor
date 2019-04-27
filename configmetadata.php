@@ -15,19 +15,6 @@ if ($argc <5 ) {
     exit (254);
 }
 
-ini_set(
-    'include_path',
-    implode(
-        PATH_SEPARATOR,
-        array(
-            implode(DIRECTORY_SEPARATOR), 
-            './vendor/php/log4php',
-            ini_get('include_path'),
-        )
-    )
-);
-
-
 declare(ticks=1);
 ////////////////////////////////////////////////////////////////////////////////
 // Mandatory stuff to bootstrap.

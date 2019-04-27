@@ -29,6 +29,6 @@
         "psr/log": ">= 1.0.0"
     },
     "require-dev": {
-        "dkgroot/pami": ">= 2.0.1.0-alpha"
+        "dkgroot/pami": "dev-master"
     }
 }
