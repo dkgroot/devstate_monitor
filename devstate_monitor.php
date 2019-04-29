@@ -65,7 +65,7 @@ try
         'secret' => $argv[4],
 
         'connect_timeout' => 10,
-        'read_timeout' => 1
+        'read_timeout' => 2
     );
     echo("Connecting to host:".$options['host'].":".$options['port']."\n");
 
