@@ -20,7 +20,7 @@
     },
     "repositories": [
         {
-            "url": "https://github.com/dkgroot/PAMI.git",
+            "url": "https://github.com/chan-sccp/PAMI.git",
             "type": "git"
         },
         {
@@ -33,7 +33,7 @@
         "psr/log": ">= 1.0.0"
     },
     "require-dev": {
-        "dkgroot/pami": "dev-master",
+        "chan-sccp/pami": "dev-master",
         "dkgroot/ciscoxml": "dev-master"
     }
 }
