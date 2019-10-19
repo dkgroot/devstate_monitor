@@ -30,6 +30,7 @@ use PAMI\Client\Impl\ClientImpl;
 use PAMI\Listener\IEventListener;
 use PAMI\Message\Event\EventMessage;
 use PAMI\Message\Action\CommandAction;
+use PAMI\Message\Action\LogoffAction;
 use PAMI\Message\Action\ListCommandsAction;
 use PAMI\Message\Action\ListCategoriesAction;
 use PAMI\Message\Action\CoreSettingsAction;
@@ -95,11 +96,9 @@ class EventListener implements IEventListener
                         $action->setActionId("1432.125");
                         $response = $this->pami->send($action);
                         
-                        // close pami immediately to stop fast
-                        if (!is_null($this->pami)) {
-                            $this->pami->close();
-                            $this->pami = NULL;
-                        }
+                        // logoff pami immediately so we stop fast
+                        $action = new LogoffAction();
+                        $response = $this->pami->send($action);
                     }
                 }
             } catch (Exception $e) {
@@ -125,8 +124,8 @@ try
         'username' => $argv[3],
         'secret' => $argv[4],
 
-        'connect_timeout' => 3,
-        'read_timeout' => 2
+        'connect_timeout' => 10,
+        'read_timeout' => 3
     );
     echo("Connecting to host:".$options['host'].":".$options['port']."\n");
     
@@ -158,11 +157,9 @@ try
         usleep(10000);					// wait 10 ms
         $pami->process();				// poll pami to see if anything happened
     }
-    /*
     if (!is_null($pami)) {
         $pami->close(); // send logoff and close the connection.
     }
-    */
 } catch (Exception $e) {
     echo $e->getMessage() . "\n";
 }
