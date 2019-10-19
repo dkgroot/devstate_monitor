@@ -102,7 +102,7 @@ class EventListener implements IEventListener
                     }
                 }
             } catch (Exception $e) {
-                echo $e->getMessage() . "\n";
+                //echo $e->getMessage() . "\n";
             }
         }
         //var_dump($event);
@@ -129,10 +129,9 @@ try
     );
     echo("Connecting to host:".$options['host'].":".$options['port']."\n");
     
-    // read gen_call.ini
-
     $pami = new ClientImpl($options);
 
+    // read from gen_call.ini instead of static definition
     $call_info = array(
         'caller_device' => "SEPE0D173E11D95",
         'called_device' => "SEP0023043403F9",
@@ -151,6 +150,7 @@ try
     $action->setLinkedId($call_info['linkedid']);
     $response = $pami->send($action);
 
+    // wait for AMI event and handle the rest in the EventListener
     $time = time();
     while($pami && (time() - $time) < $options['connect_timeout'])   // start waiting for events (for ;connect_timeout' minute)
     {
@@ -161,7 +161,7 @@ try
         $pami->close(); // send logoff and close the connection.
     }
 } catch (Exception $e) {
-    echo $e->getMessage() . "\n";
+    //echo $e->getMessage() . "\n";
 }
 ////////////////////////////////////////////////////////////////////////////////
 // Code ENDS.
