@@ -43,3 +43,6 @@ asterisk -rx "devstate change Custom:mystate UNAVAILABLE"
 ```
 And see how the monitor reflects this state
 
+Other example files:
+- Paging.php
+- ListenDaemon.php

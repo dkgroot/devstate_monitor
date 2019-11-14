@@ -40,6 +40,8 @@ use PAMI\Message\Action\HangupAction;
 use PAMI\Message\Event\DeviceStateChangeEvent;
 use PAMI\Message\Event\NewchannelEvent;
 use PAMI\Message\Event\NewstateEvent;
+//use PAMI\Message\Event\NewextenEvent;
+//use PAMI\Message\Event\TestEvent;
 
 class EventListener implements IEventListener
 {
@@ -83,7 +85,7 @@ class EventListener implements IEventListener
                         
                     }
                 }
-            }
+            } else
             if ($event instanceof PAMI\Message\Event\DeviceStateChangeEvent && $event->getDevice() == "SCCP/".$call_info['calling_line']) {
                 echo("Got a new DeviceStateChangeEvent\n");
                 echo(" - Device:".$event->getDevice()."\n");
@@ -101,8 +103,9 @@ class EventListener implements IEventListener
                         $response = $pami->send($action);
                     }
                 }
+            //} else {
+            //    var_dump($event);
             }
-            //var_dump($event);
         } catch (Exception $e) {
             //echo $e->getMessage() . "\n";
         }
