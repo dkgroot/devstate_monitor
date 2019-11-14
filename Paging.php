@@ -59,7 +59,7 @@ class Pusher
 	function push2phone($ip)
 	{
 		$response = "";
-		$auth = base64_encode($options['phone']['uid'].":".$options['phone']['pwd']);
+		$auth = base64_encode($this->options['phone']['uid'].":".$this->options['phone']['pwd']);
 		$xml = "<CiscoIPPhoneExecute><ExecuteItem Priority=\"0\" URL=\"".$this->uri."\"/></CiscoIPPhoneExecute>";
 		$xml = "XML=".urlencode($xml);
 
@@ -114,6 +114,7 @@ try {
 	debug('Processing Results...');
 	$device_table=$result->getTable('Devices');
 	foreach($device_table['Entries'] as $key => $entry) {
+		// print_r($entry);
 		$devicename = $entry->getKey('mac');
 		$connection = $entry->getKey('address');
 		// check if we set a device_array, and only push to those devices
