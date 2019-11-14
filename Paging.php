@@ -1,4 +1,4 @@
-#!/usr/bin/php
+#!/usr/bin/php -q
 <?php
 declare(ticks=1);
 
@@ -12,21 +12,19 @@ use PAMI\Client\Impl\ClientImpl as PamiClient;
 use PAMI\Message\Event\EventMessage;
 use PAMI\Message\Action\ActionMessage;
 use PAMI\Listener\IEventListener;
-use PAMI\Message\Event\SCCPShowDevicesEvent;
 use PAMI\Message\Action\SCCPShowDevicesAction;
 
 date_default_timezone_set('UTC');
 
+require('Paging.cfg');
 $running = true;
 // Uid/Pwd Verified against AuthenticationURL (cnf.xml), URL is queryied using Basic Authentication and should return the string 'AUTHORIZED'
-$uid = "cisco";
-$pwd = "cisco";
 $device_array = array();
 $uri = "RTPRx:Stop";
 
 if (isset($argv[1])) {
     if (strtolower($argv[1]) == "start") {
-        $uri = "RTPMRx:239.0.0.1:21000:100";
+        $uri = "RTPMRx:" . $options['multicast']['ip'] . ":" . $options['multicast']['port'] . ":100";
     }
 }
 
@@ -34,6 +32,7 @@ if (isset($argv[2])) {
        	$device_array = explode(",", $argv[2]);
 }
 
+/*
 $pamiClientOptions = array(
     'log4php.properties' => 'log4php.properties',
     'host' => '127.0.0.1',
@@ -44,23 +43,23 @@ $pamiClientOptions = array(
     'connect_timeout' => 10000,
     'read_timeout' => 10000
 );
+*/
 
 class Pusher
 {
+	private $options;
 	private $uri;
-	private $uid;
-	private $pwd;
 	
-	function Pusher($uri, $uid, $pwd) {
+	function Pusher($uri) {
+		global $options;
+		$this->options = $options;
 		$this->uri = $uri;
-		$this->uid = $uid;
-		$this->pwd = $pwd;
 	}
 
 	function push2phone($ip)
 	{
 		$response = "";
-		$auth = base64_encode($this->uid.":".$this->pwd);
+		$auth = base64_encode($options['phone']['uid'].":".$options['phone']['pwd']);
 		$xml = "<CiscoIPPhoneExecute><ExecuteItem Priority=\"0\" URL=\"".$this->uri."\"/></CiscoIPPhoneExecute>";
 		$xml = "XML=".urlencode($xml);
 
@@ -88,71 +87,60 @@ class Pusher
 	}
 }
 
-$EventBuffer = array();
+function debug($text) {
+	global $options;
+	if ($options['debug']) {
+		echo($text . "\n");
+	}
+}
 
+$EventBuffer = array();
 try {
-	$pamiClient = new PamiClient($pamiClientOptions);
+	//$pamiClient = new PamiClient($pamiClientOptions);
+	$pamiClient = new PamiClient($options);
+
+	// create a new Pusher
+	$pusher = new Pusher($uri);
+	debug('Created new pusher.');
 
 	// Open the connection
 	$pamiClient->open();
-
-	// Setup a event listener
-	$pamiClient->registerEventListener(function (EventMessage $event) {
-		global $EventBuffer;
-		global $running;
-
-		// If it's a device entry push it to the buffer		
-		if ($event->getName() == "SCCPDeviceEntry") {
-			echo "SCCPDeviceEntry\n";
-			
-			array_push($EventBuffer, $event);
-		}
-
-		// If table end break out of the main loop
-		if ($event->getName() == "TableEnd") {
-			echo "SCCPDeviceEntry\n";
-			$running = false;
-		}
-	});
+	debug('Pami Connected.');
 
 	// Send a SCCPShowDevices action via AMI
-	$result = $pamiClient->send(new SCCPShowDevicesAction());
-
-	// Main Loop - Wait for Message to Finish (Max 1 min)
-	$time = time();
-	while($running && ((time() - $time) < 1)) {
-		usleep(100000); // 100ms delay
-		$pamiClient->process();
-	}
-	$pamiClient->close();
-
-	// create a new Pusher
-	$pusher = new Pusher($uri, $uid, $pwd);
-
-	// Walk the returned events
-	foreach($result->getEvents() as $event) {
-		if ($event->getKey('event') == "SCCPDeviceEntry") {
-			$devicename = $event->getKey('mac');
-			$connection = $event->getKey('address');
-			/* check if we set a device_array, and only push to those devices */
-			if ($connection != "--" && $event->getKey('act') == "No" && (count($device_array) == 0 || in_array($devicename, $device_array))) {
-				// split the connection into ip/port parts
-				$ip = substr($connection, 0, strrpos($connection, ":", 1));
-				$port = substr(strrchr($connection, ":"), 1);
-				
-				// Handle IPv4-Mapped IPv6 Address
-				if (strpos($ip, "::ffff:")) {
-					$ip = substr($ip, 8, -1);
-				}
-				
-				// check if result is a valid IP-Address
-				if (!filter_var($ip, FILTER_VALIDATE_IP, NULL) === false) {
-					echo 'SCCPDeviceEntry name: ' . $devicename . ', ip:' . $ip . "\n";
-					echo $pusher->push2phone($ip);
-				}
+	$action = new SCCPShowDevicesAction();
+	$result = $pamiClient->send($action);
+	debug('SCCPShowDevicesAction sent to asterisk.');
+	debug('Processing Results...');
+	$device_table=$result->getTable('Devices');
+	foreach($device_table['Entries'] as $key => $entry) {
+		$devicename = $entry->getKey('mac');
+		$connection = $entry->getKey('address');
+		// check if we set a device_array, and only push to those devices
+		debug("Checking events: devicename:$devicename, connection:$connection");
+		
+		if ($connection != "--" && $entry->getKey('act') == "No" && (count($device_array) == 0 || in_array($devicename, $device_array))) {
+			// split the connection into ip/port parts
+			$ip = substr($connection, 0, strrpos($connection, ":", 1));
+			$port = substr(strrchr($connection, ":"), 1);
+			
+			debug("match found: ip:$ip, port:$port");
+			
+			// Handle IPv4-Mapped IPv6 Address
+			if (strpos($ip, "::ffff:")) {
+				$ip = substr($ip, 8, -1);
+			}
+			
+			// check if result is a valid IP-Address
+			if (!filter_var($ip, FILTER_VALIDATE_IP, NULL) === false) {
+				debug("Pushing Message to devicename:$devicename, ip:$ip\n");
+				echo $pusher->push2phone($ip);
 			}
 		}
 	}
+
+	$pamiClient->close();
+	debug('Pami disconnected.');
 } catch (Exception $e) {
 	print "Exception: " . $e->getMessage();
 }
