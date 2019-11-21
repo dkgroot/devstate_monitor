@@ -117,10 +117,11 @@ try {
 		// print_r($entry);
 		$devicename = $entry->getKey('mac');
 		$connection = $entry->getKey('address');
+		$active = $entry->getKey('act') == 1;
 		// check if we set a device_array, and only push to those devices
-		debug("Checking events: devicename:$devicename, connection:$connection");
+		debug("Checking events: devicename:$devicename, connection:$connection, active:$active");
 		
-		if ($connection != "--" && $entry->getKey('act') == "No" && (count($device_array) == 0 || in_array($devicename, $device_array))) {
+		if ($connection != "--" && !$active && (count($device_array) == 0 || in_array($devicename, $device_array))) {
 			// split the connection into ip/port parts
 			$ip = substr($connection, 0, strrpos($connection, ":", 1));
 			$port = substr(strrchr($connection, ":"), 1);
