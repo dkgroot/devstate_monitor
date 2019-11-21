@@ -2,6 +2,15 @@
 <?php
 declare(ticks=1);
 
+# Example use case:
+#
+# [multicast-paging]
+# exten => 400,1,Answer()
+# exten => 400,n,System(sudo /var/lib/asterisk/scripts/paging.php start SEPxxxx,SEPyyy,SEPzzz)
+# exten => 400,n,NoOp(${SYSTEMSTATUS})
+# exten => 400,n,Page(console/dsp&MulticastRTP/basic/239.0.0.1:21000)
+# exten => h,1,System(sudo /var/lib/asterisk/scripts/paging.php stop SEPxxxx,SEPyyy,SEPzzz)
+
 require(implode(DIRECTORY_SEPARATOR, array(
     __DIR__,
     'vendor',
@@ -31,19 +40,6 @@ if (isset($argv[1])) {
 if (isset($argv[2])) {
        	$device_array = explode(",", $argv[2]);
 }
-
-/*
-$pamiClientOptions = array(
-    'log4php.properties' => 'log4php.properties',
-    'host' => '127.0.0.1',
-    'scheme' => 'tcp://',
-    'port' => 5038,
-    'username' => 'admin',
-    'secret' => 'secret',
-    'connect_timeout' => 10000,
-    'read_timeout' => 10000
-);
-*/
 
 class Pusher
 {
